@@ -1,112 +1,52 @@
-import { Button } from '../components/ui/button'
+import { useMemo } from 'react'
 import { Card, CardContent } from '../components/ui/card'
+import useSWR from 'swr'
+import { Skeleton } from '../components/ui/skeleton'
 
+const sheetUrl =
+    'https://script.google.com/macros/s/AKfycbxsTJbXgyfI0XYu8NMSR1md9eHgA_r9nXFtPo05_JhPr4oq1u0vTCqgdqNCfLVX5POx/exec'
 
-// @ts-expect-error no fix
-const Players = [
-  {
-    name: 'Erling Haaland',
-    number: '9',
-    image: '/erling-haaland.webp',
-    instagram: 'https://www.instagram.com/erling/?hl=en',
-    position: 'Midfielder',
-  },
-  {
-    name: 'Erling Haaland',
-    number: '9',
-    image: '/erling-haaland.webp',
-    instagram: 'https://www.instagram.com/erling/?hl=en',
-    position: 'Midfielder',
-  },
-  {
-    name: 'Erling Haaland',
-    number: '9',
-    image: '/erling-haaland.webp',
-    instagram: 'https://www.instagram.com/erling/?hl=en',
-    position: 'Midfielder',
-  },
-  {
-    name: 'Erling Haaland',
-    number: '9',
-    image: '/erling-haaland.webp',
-    instagram: 'https://www.instagram.com/erling/?hl=en',
-    position: 'Midfielder',
-  },
-  {
-    name: 'Erling Haaland',
-    number: '9',
-    image: '/erling-haaland.webp',
-    instagram: 'https://www.instagram.com/erling/?hl=en',
-    position: 'Midfielder',
-  },
-  {
-    name: 'Erling Haaland',
-    number: '9',
-    image: '/erling-haaland.webp',
-    instagram: 'https://www.instagram.com/erling/?hl=en',
-    position: 'Midfielder',
-  },
-]
-
-// Sample player data
-const goalkeepers = [
-    {
-        name: 'SCOTT CARSON',
-        number: '33',
-        image: '/erling-haaland.webp',
-        nationality: 'England',
-        flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
-    },
-    {
-        name: 'EDERSON',
-        number: '31',
-        image: '/erling-haaland.webp',
-        nationality: 'Brazil',
-        flag: '🇧🇷',
-    },
-    {
-        name: 'STEFAN ORTEGA MORENO',
-        number: '18',
-        image: '/erling-haaland.webp',
-        nationality: 'Germany',
-        flag: '🇩🇪',
-    },
-]
-
-const defenders = [
-    {
-        name: 'MANUEL AKANJI',
-        number: '25',
-        image: '/erling-haaland.webp',
-        nationality: 'Switzerland',
-        flag: '🇨🇭',
-    },
-    {
-        name: 'NATHAN AKE',
-        number: '6',
-        image: '/erling-haaland.webp',
-        nationality: 'Netherlands',
-        flag: '🇳🇱',
-    },
-    {
-        name: 'RUBEN DIAS',
-        number: '3',
-        image: '/erling-haaland.webp',
-        nationality: 'Portugal',
-        flag: '🇵🇹',
-    },
-    {
-        name: 'JOSKO GVARDIOL',
-        number: '24',
-        image: '/erling-haaland.webp',
-        nationality: 'Croatia',
-        flag: '🇭🇷',
-    },
-]
+interface Player {
+    name: string
+    number: string
+    position: string
+    image?: string
+    instagram?: string
+}
 
 export default function PlayersPage() {
+    const { data, isLoading } = useSWR(sheetUrl, async () => {
+        const res = await fetch(sheetUrl, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                Accept: 'application/json',
+            },
+        })
+        const data = await res.json()
+        return data as {
+            players: Player[]
+            general: any
+            sponsors?: string[]
+        }
+    })
+    const groupedPlayer = useMemo(() => {
+        // group by position, we dont know all the position
+        // so we need to make it dynamic
+        const grouped = data?.players?.reduce((groups, player) => {
+            const position = player.position
+            if (!groups[position]) {
+                groups[position] = []
+            }
+            groups[position].push(player)
+            return groups
+        }, {} as Record<string, Player[]>)
+        return grouped
+    }, [data])
     return (
-        <div className='min-h-screen bg-white'>
+        <div
+            className='min-h-screen bg-white'
+        >
             {/* Header */}
             <header className='border-b'>
                 <div className='container mx-auto px-4'>
@@ -114,7 +54,7 @@ export default function PlayersPage() {
                         <div className='flex items-center gap-4'>
                             <img
                                 src='/logo.webp'
-                                alt='Manchester City'
+                                alt='Spectre'
                                 width={240}
                                 height={80}
                                 className='h-16 w-fit object-contain'
@@ -150,13 +90,14 @@ export default function PlayersPage() {
                     </div>
                 </div>
             </header>
+
             {/* Hero Section */}
             <section id='hero' className='bg-sky-700 py-16 text-white'>
                 <div className='container mx-auto px-4'>
                     <div className='flex flex-col items-center justify-center space-y-6 md:flex-row md:space-x-12 md:space-y-0'>
                         <img
                             src='/logo.webp'
-                            alt='Manchester City Logo'
+                            alt='Spectre Logo'
                             width={200}
                             height={200}
                             className='h-28 w-fit md:h-48 md:w-80 object-contain'
@@ -172,54 +113,52 @@ export default function PlayersPage() {
                     </div>
                 </div>
             </section>
+            {isLoading && <Skeleton className='h-[800px]' />}
             {/* Highlight Video Section */}
-            <section id='highlight' className='bg-gray-100 py-16'>
-                <div className='container mx-auto px-4'>
-                    <h2 className='mb-8 text-center text-3xl font-bold text-sky-700'>
-                        Team Highlights
-                    </h2>
-                    <div className='mx-auto max-w-3xl overflow-hidden rounded-lg shadow-lg'>
-                        <div className='aspect-[16/9]'>
-                            <iframe
-                                src='https://www.youtube.com/embed/dQw4w9WgXcQ'
-                                allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-                                allowFullScreen
-                                className='h-full w-full'
-                            ></iframe>
+            {data?.general?.youtube_url && (
+                <section id='highlight' className='bg-gray-100 py-16'>
+                    <div className='container mx-auto px-4'>
+                        <h2 className='mb-8 text-center text-3xl font-bold text-sky-700'>
+                            Team Highlights
+                        </h2>
+                        <div className='mx-auto max-w-3xl overflow-hidden rounded-lg shadow-lg'>
+                            <div className='aspect-[16/9]'>
+                                <iframe
+                                    src={data?.general?.youtube_url}
+                                    allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                                    allowFullScreen
+                                    className='h-full w-full'
+                                ></iframe>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
             {/* Main Content */}
             <main className='container mx-auto px-4 py-8'>
                 <h1 className='mb-8 text-4xl font-bold text-sky-400'>
                     PLAYERS
                 </h1>
 
-                <section id='players' className='mb-12'>
-                    <h2 className='mb-6 text-3xl font-bold text-sky-400'>
-                        GOALKEEPERS
-                    </h2>
-                    <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-                        {goalkeepers.map(player => (
-                            <PlayerCard player={player} />
-                        ))}
-                    </div>
-                </section>
+                {groupedPlayer &&
+                    Object.entries(groupedPlayer).map(([pos, v], i) => (
+                        <section id='players' className='mb-12' key={i}>
+                            <h2 className='mb-6 text-3xl font-bold text-sky-400'>
+                                {pos}
+                            </h2>
+                            <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+                                {v.map(player => (
+                                    <PlayerCard player={player} />
+                                ))}
+                            </div>
+                        </section>
+                    ))}
 
-                {/* Defenders Section */}
-                <section>
-                    <h2 className='mb-6 text-3xl font-bold text-sky-400'>
-                        DEFENDERS
-                    </h2>
-                    <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4'>
-                        {defenders.map(player => (
-                            <PlayerCard player={player} />
-                        ))}
-                    </div>
-                </section>
                 {/* Join Our Team Section */}
-                <section id='join' className='bg-sky-700 py-16 text-white my-12'>
+                <section
+                    id='join'
+                    className='bg-sky-700 py-16 text-white my-12'
+                >
                     <div className='container mx-auto px-4'>
                         <div className='grid gap-8 md:grid-cols-2'>
                             <div>
@@ -232,27 +171,30 @@ export default function PlayersPage() {
                                     </a>
                                 </h2>
                                 <p className='mb-6'>
-                                    Be a part of the Manchester City family.
-                                    We&apos;re always looking for passionate
-                                    individuals to join our team, both on and
-                                    off the field.
+                                    Be a part of the Spectre family. We&apos;re
+                                    always looking for passionate individuals to
+                                    join our team, both on and off the field.
                                 </p>
-                                <Button className='bg-white text-sky-700 px-8 hover:bg-sky-100'>
+                                <a
+                                    href={`https://wa.me/${data?.general?.whatsapp}`}
+                                    target='_blank'
+                                    className='bg-white text-sky-700 px-8 hover:bg-sky-100 py-2 rounded-sm'
+                                >
                                     Join
-                                </Button>
+                                </a>
                             </div>
                             <div>
                                 <h3 className='mb-4 text-2xl font-bold'>
                                     Our Sponsors
                                 </h3>
                                 <div className='grid grid-cols-3 gap-4'>
-                                    {[1, 2, 3, 4, 5, 6].map(sponsor => (
+                                    {data?.sponsors?.map(sponsor => (
                                         <div
                                             key={sponsor}
                                             className='flex items-center justify-center rounded-md bg-white p-4'
                                         >
                                             <img
-                                                src='/placeholder.svg'
+                                                src={sponsor}
                                                 alt={`Sponsor ${sponsor}`}
                                                 width={100}
                                                 height={50}
@@ -270,17 +212,7 @@ export default function PlayersPage() {
     )
 }
 
-const PlayerCard = ({
-    player,
-}: {
-    player: {
-        name: string
-        number: string
-        image: string
-        nationality: string
-        flag: string
-    }
-}) => {
+const PlayerCard = ({ player }: { player: Player }) => {
     return (
         <a href='https://www.instagram.com/erling/?hl=en' target='_blank'>
             <Card key={player.number} className='group overflow-hidden'>
@@ -296,7 +228,7 @@ const PlayerCard = ({
                         />
                     </div>
                     <div className='p-4'>
-                        <span className='text-2xl'>{player.flag}</span>
+                        {/* <span className='text-2xl'>{player.flag}</span> */}
                         <h3 className='mt-2 text-xl font-bold'>
                             {player.name}
                         </h3>

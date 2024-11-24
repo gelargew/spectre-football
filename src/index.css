@@ -3,6 +3,13 @@
 @tailwind utilities;
 
 
+@font-face {
+  font-family: 'Freiburg'; /* Choose a name for your font */
+  src: url('/src/assets/fonts/freiburg.otf') format('opentype'); /* Path to the .otf file */
+  font-weight: normal; /* You can specify other weights if needed */
+  font-style: normal;  /* Adjust if italic or other styles are needed */
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -69,6 +76,11 @@ html {
   }
   body {
     @apply bg-background text-foreground;
+
     scroll-behavior: smooth;
+  }
+  h1,h2,h3,h4,h5,h6 {
+    font-family: 'Freiburg', sans-serif;
+    letter-spacing: 0.1em;
   }
 }
