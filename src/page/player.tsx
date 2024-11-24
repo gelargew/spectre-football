@@ -1,6 +1,53 @@
 import { Button } from '../components/ui/button'
 import { Card, CardContent } from '../components/ui/card'
 
+
+// @ts-expect-error no fix
+const Players = [
+  {
+    name: 'Erling Haaland',
+    number: '9',
+    image: '/erling-haaland.webp',
+    instagram: 'https://www.instagram.com/erling/?hl=en',
+    position: 'Midfielder',
+  },
+  {
+    name: 'Erling Haaland',
+    number: '9',
+    image: '/erling-haaland.webp',
+    instagram: 'https://www.instagram.com/erling/?hl=en',
+    position: 'Midfielder',
+  },
+  {
+    name: 'Erling Haaland',
+    number: '9',
+    image: '/erling-haaland.webp',
+    instagram: 'https://www.instagram.com/erling/?hl=en',
+    position: 'Midfielder',
+  },
+  {
+    name: 'Erling Haaland',
+    number: '9',
+    image: '/erling-haaland.webp',
+    instagram: 'https://www.instagram.com/erling/?hl=en',
+    position: 'Midfielder',
+  },
+  {
+    name: 'Erling Haaland',
+    number: '9',
+    image: '/erling-haaland.webp',
+    instagram: 'https://www.instagram.com/erling/?hl=en',
+    position: 'Midfielder',
+  },
+  {
+    name: 'Erling Haaland',
+    number: '9',
+    image: '/erling-haaland.webp',
+    instagram: 'https://www.instagram.com/erling/?hl=en',
+    position: 'Midfielder',
+  },
+]
+
 // Sample player data
 const goalkeepers = [
     {
