@@ -66,7 +66,7 @@ export default function PlayersPage() {
                     <div className='flex h-16 items-center justify-between'>
                         <div className='flex items-center gap-4'>
                             <img
-                                src='/logo.png'
+                                src='/logo.webp'
                                 alt='Manchester City'
                                 width={240}
                                 height={80}
@@ -108,7 +108,7 @@ export default function PlayersPage() {
                 <div className='container mx-auto px-4'>
                     <div className='flex flex-col items-center justify-center space-y-6 md:flex-row md:space-x-12 md:space-y-0'>
                         <img
-                            src='/logo.png'
+                            src='/logo.webp'
                             alt='Manchester City Logo'
                             width={200}
                             height={200}
