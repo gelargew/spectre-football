@@ -12,6 +12,7 @@ interface Player {
     position: string
     image?: string
     instagram?: string
+    image_background?: string
 }
 
 export default function PlayersPage() {
@@ -27,7 +28,7 @@ export default function PlayersPage() {
         return data as {
             players: Player[]
             general: any
-            sponsors?: string[]
+            sponsors?: string[][]
         }
     })
     const groupedPlayer = useMemo(() => {
@@ -44,9 +45,7 @@ export default function PlayersPage() {
         return grouped
     }, [data])
     return (
-        <div
-            className='min-h-screen bg-white'
-        >
+        <div className='min-h-screen bg-white'>
             {/* Header */}
             <header className='border-b'>
                 <div className='container mx-auto px-4'>
@@ -92,23 +91,40 @@ export default function PlayersPage() {
             </header>
 
             {/* Hero Section */}
-            <section id='hero' className='bg-sky-700 py-16 text-white'>
-                <div className='container mx-auto px-4'>
-                    <div className='flex flex-col items-center justify-center space-y-6 md:flex-row md:space-x-12 md:space-y-0'>
+            <section
+                id='hero'
+                className='py-16 text-white h-auto md:aspect-[16/5] aspect-video relative'
+            >
+                {data?.general?.heading_image && (
+                    <picture>
+                        {/* create src of heading_image and heading_iamge_mobile */}
+                        {data?.general?.heading_image_mobile && (
+                            <source
+                                media='(max-width: 640px)'
+                                srcSet={data?.general?.heading_image_mobile}
+                            />
+                        )}
+
                         <img
-                            src='/logo.webp'
-                            alt='Spectre Logo'
-                            width={200}
-                            height={200}
-                            className='h-28 w-fit md:h-48 md:w-80 object-contain'
+                            src={data?.general?.heading_image}
+                            alt='Spectre'
+                            className='h-full w-full object-cover object-center absolute top-0 left-0 z-0'
                         />
+                    </picture>
+                )}
+                <div className='container mx-auto px-4 relative z-10'>
+                    <div className='flex flex-col items-center justify-center space-y-6 md:flex-row md:space-x-12 md:space-y-0'>
                         <div className='text-center md:text-left'>
-                            <h1 className='text-4xl font-bold md:text-6xl'>
-                                Spectre
-                            </h1>
-                            <p className='mt-2 text-xl font-light md:text-2xl'>
-                                Official Team Page
-                            </p>
+                            {data?.general?.heading && (
+                                <h1 className='text-4xl font-bold md:text-6xl'>
+                                    {data?.general?.heading}
+                                </h1>
+                            )}
+                            {data?.general?.subheading && (
+                                <p className='mt-2 text-xl font-light md:text-2xl'>
+                                    {data?.general?.subheading}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -135,7 +151,7 @@ export default function PlayersPage() {
                 </section>
             )}
             {/* Main Content */}
-            <main className='container mx-auto px-4 py-8'>
+            <main className='container mx-auto px-4 pt-8'>
                 <h1 className='mb-8 text-4xl font-bold text-sky-400'>
                     PLAYERS
                 </h1>
@@ -146,7 +162,7 @@ export default function PlayersPage() {
                             <h2 className='mb-6 text-3xl font-bold text-sky-400'>
                                 {pos}
                             </h2>
-                            <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+                            <div className='grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4'>
                                 {v.map(player => (
                                     <PlayerCard player={player} />
                                 ))}
@@ -155,9 +171,11 @@ export default function PlayersPage() {
                     ))}
 
                 {/* Join Our Team Section */}
-                <section
+
+            </main>
+            <section
                     id='join'
-                    className='bg-sky-700 py-16 text-white my-12'
+                    className='bg-sky-700 py-16 text-white mt-12'
                 >
                     <div className='container mx-auto px-4'>
                         <div className='grid gap-8 md:grid-cols-2'>
@@ -171,9 +189,7 @@ export default function PlayersPage() {
                                     </a>
                                 </h2>
                                 <p className='mb-6'>
-                                    Be a part of the Spectre family. We&apos;re
-                                    always looking for passionate individuals to
-                                    join our team, both on and off the field.
+                                    {data?.general?.join_us}
                                 </p>
                                 <a
                                     href={`https://wa.me/${data?.general?.whatsapp}`}
@@ -187,27 +203,30 @@ export default function PlayersPage() {
                                 <h3 className='mb-4 text-2xl font-bold'>
                                     Our Sponsors
                                 </h3>
-                                <div className='grid grid-cols-3 gap-4'>
-                                    {data?.sponsors?.map(sponsor => (
-                                        <div
-                                            key={sponsor}
-                                            className='flex items-center justify-center rounded-md bg-white p-4'
+                                <div className='flex flex-wrap gap-4'>
+                                    {data?.sponsors?.map((sponsor, i) => (
+                                        <a
+                                            href={sponsor[1]}
+                                            target='_blank'
+                                            key={i}
+
+                                            className='flex items-center justify-center rounded-md bg-white p-4 aspect-video h-24 w-32'
                                         >
                                             <img
-                                                src={sponsor}
-                                                alt={`Sponsor ${sponsor}`}
+                                                src={sponsor[0]}
+
+                                                alt={`Sponsor`}
                                                 width={100}
                                                 height={50}
                                                 className='h-auto max-w-full'
                                             />
-                                        </div>
+                                        </a>
                                     ))}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
-            </main>
         </div>
     )
 }
@@ -217,17 +236,24 @@ const PlayerCard = ({ player }: { player: Player }) => {
         <a href='https://www.instagram.com/erling/?hl=en' target='_blank'>
             <Card key={player.number} className='group overflow-hidden'>
                 <CardContent className='relative p-0'>
-                    <div className='relative aspect-[3/4] flex items-end overflow-hidden bg-sky-400'>
+                    <div className='relative aspect-[3/4] flex items-end overflow-hidden'>
+                        {player?.image_background && (
+                            <img
+                                src={player.image_background}
+                                alt={player.name}
+                                className='absolute top-0 left-0 w-full h-full object-cover'
+                            />
+                        )}
                         <span className='absolute right-4 top-4 text-8xl font-bold text-sky-300'>
                             {player.number}
                         </span>
                         <img
                             src={player.image}
                             alt={player.name}
-                            className='object-cover transition-transform duration-300 group-hover:scale-105'
+                            className='object-cover transition-transform duration-300 group-hover:scale-105 absolute h-full w-full'
                         />
                     </div>
-                    <div className='p-4'>
+                    <div className='p-4 relative z-10 bg-white'>
                         {/* <span className='text-2xl'>{player.flag}</span> */}
                         <h3 className='mt-2 text-xl font-bold'>
                             {player.name}
